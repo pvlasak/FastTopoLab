@@ -1,0 +1,1 @@
+This project is about to develop VueJS application with backend running in Node.js to present portfolio of startup company focused on digital simulations, topology optimization and additive manufacturing. 
