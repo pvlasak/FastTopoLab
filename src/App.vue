@@ -50,9 +50,9 @@
                             </div>   
                         </div> 
                     </div>
-                    <div v-show="isContactMode">
+                    <div v-show="isContactMode && !isMessageSent">
                         <div id="post-form-container">
-                            <form>
+                            <form @submit.prevent="SendMessage">
                                 <span> <b> Name </b> </span>
                                 <input type="text" placeholder="Enter Name" v-model="name"/><br>
                                 <label> <b> Surname </b> </label>
@@ -63,9 +63,17 @@
                                 <input type="text" placeholder="Enter Telephone Number" v-model="telephone"/><br>
                                 <label> <b>  Send us a message </b> </label>
                                 <textarea placeholder="Your message ... " v-model="message"> </textarea><br>
-                                <button id="save-button" @click="SendMessage"> Send </button>
+                                <button id="save-button"> Send </button>
                             </form>
                         </div>
+                    </div>
+                    <div v-show="isMessageSent">
+                        <div id="send-info">
+                            <div id="message-info"> 
+                                <h2> Your message has been successfully sent to us ! </h2>
+                                <button id="home-button" @click="ReturnHome"> Return To Homepage </button>
+                            </div>   
+                        </div> 
                     </div>
                 </div>
             </div>
@@ -97,15 +105,40 @@ export default {
             email: "",
             telephone: "",
             messsage: "",
-            isContactMode: false
+            isContactMode: false,
+            isMessageSent: false
         }
     },
     methods: {
         ContactUs(){
             this.isContactMode = true
         },
-        SendMessage() {
+        async SendMessage() {
+            const payload = {
+                name: this.name,
+                surname: this.surname,
+                email: this.email,
+                telephone: this.telephone, 
+                message: this.message
+            }
+            const resJson = await this.UploadMessage(payload)
+            console.log(resJson)
+            this.isMessageSent = true
+        },
+        async UploadMessage(payload) {
+            const res = await fetch('upload-message', {
+                method: "POST",                 
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            return await res.json()
+        },
+        ReturnHome() {
             this.isContactMode = false
+            this.isMessageSent = false
         }
     }
 }
