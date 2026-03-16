@@ -321,6 +321,7 @@ body {
 
 #message {
     background-color: white;
+    font-weight: bold;
     border-radius: 10px;
     padding:8px;
 }
@@ -331,8 +332,14 @@ body {
     width: 100%;
 }
 
+#message-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 #post-form-container textarea {
-    width: 400px;
+    width: 200px;
     height: 200px;
 }
 #post-form-container input,label {
