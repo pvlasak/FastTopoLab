@@ -10,12 +10,12 @@
                     <h3> About </h3>
                 </div>
                 <div id="button-container">
-                    <button> Log In </button> 
+                    <button @click="ShowCustomerPosts"> Log In </button> 
                 </div>
             </div>
         </div>
-        <div id="main-section-container">
-            <h2> High Performance Parts For Your Business </h2>
+        <div id="main-section-container" v-show="!isUserLoggedIn">
+            <h2> High Performance Parts For Your Business </h2>demands
             <h3> We use advanced digital tools to design highly optimized and robust parts</h3>
             <div id="main-body">
                 <div id="competence-wrapper"> 
@@ -78,6 +78,14 @@
                 </div>
             </div>
         </div> 
+        <div id="customer-posts" v-show="isUserLoggedIn">
+            <div id="post" v-for="post in posts">
+                <b> Customer Name: </b> <span> {{ post.name }}  {{ post.surname }} </span><br>
+                <b> Email: </b> <span>{{ post.email }}</span><br>
+                <b> Telephone: </b> <span> {{ post.telephone }}</span><br>
+                <b> Demand: </b> <span> {{  post.message }} </span><br>
+            </div>
+        </div>
     
         <div id="footer-wrapper">
             <h2> FastTopo Lab </h2>
@@ -106,7 +114,9 @@ export default {
             telephone: "",
             messsage: "",
             isContactMode: false,
-            isMessageSent: false
+            isMessageSent: false,
+            isUserLoggedIn: false,
+            posts: []
         }
     },
     methods: {
@@ -136,9 +146,18 @@ export default {
             })
             return await res.json()
         },
+        async fetchCustomerPosts() {
+            const res = await fetch('get-posts')
+            const data = await res.json()
+            return data
+        },
         ReturnHome() {
             this.isContactMode = false
             this.isMessageSent = false
+        },
+        async ShowCustomerPosts() {
+            this.isUserLoggedIn = true
+            this.posts = await this.fetchCustomerPosts()
         }
     }
 }
@@ -166,6 +185,10 @@ body {
     font-weight: bold;
     color: white;
 }
+#header-container button:hover {
+    cursor: pointer;
+}
+
 #logo-container {
     display: flex;
     height: 70px;
@@ -344,6 +367,24 @@ body {
 }
 #post-form-container input,label {
     display:flex;
+}
+
+#customer-posts {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    margin: 15px auto;
+    background-color: rgb(192, 215, 237);
+    align-items: center;
+    padding: 10px;
+}
+
+#post {
+    border: 2px solid black;
+    border-radius: 4px;
+    background-color: rgb(208, 180, 180);
+    width: 80%;
+    margin-bottom: 15px;
 }
 
 #footer-wrapper {

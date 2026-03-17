@@ -4,7 +4,7 @@ const bodyParser = require('body-parser')
 const { MongoClient} = require('mongodb')
 
 
-const url = 'mongodb://admin:password@localhost:27017'
+const url = 'mongodb://localhost:27017'
 const client = new MongoClient(url)
 
 const dbName = 'companydb'
@@ -12,6 +12,14 @@ const collName = 'customers'
 
 app.use(bodyParser.json())
 app.use('/', express.static(__dirname + '/dist'))
+
+app.get('/get-posts', async function(req, res){
+    const db = client.db(dbName)
+    const collection = db.collection(collName)
+    const result = await collection.find().toArray()
+    console.log(result)
+    res.send(result)
+})
 
 app.post('/upload-message', async function(req, res) {
     const payload = req.body
@@ -24,6 +32,7 @@ app.post('/upload-message', async function(req, res) {
     const collection = db.collection(collName)
 
     await collection.insertOne(payload)
+    client.close()
     res.send({info: "Message successfully uploaded."})
 })
 
